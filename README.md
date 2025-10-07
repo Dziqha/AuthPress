@@ -15,12 +15,34 @@ Supports **session** or **JWT** mode for OAuth.
 * `.env` file must include:
 
 ```env
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-GOOGLE_CALLBACK=http://localhost:3000/auth/google/callback
-GITHUB_CLIENT_ID=...
-GITHUB_CLIENT_SECRET=...
-GITHUB_CALLBACK=http://localhost:3000/auth/github/callback
+# --- GOOGLE OAUTH ---
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+
+# --- GITHUB OAUTH ---
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_CALLBACK_URL=http://localhost:3000/auth/github/callback
+
+# --- FACEBOOK OAUTH ---
+FACEBOOK_CLIENT_ID=your_facebook_app_id
+FACEBOOK_CLIENT_SECRET=your_facebook_app_secret
+FACEBOOK_CALLBACK_URL=http://localhost:3000/auth/facebook/callback
+
+# --- DISCORD OAUTH ---
+DISCORD_CLIENT_ID=your_discord_client_id
+DISCORD_CLIENT_SECRET=your_discord_client_secret
+DISCORD_CALLBACK_URL=http://localhost:3000/auth/discord/callback
+
+# --- MODE (select one: session | jwt) ---
+AUTH_MODE=jwt
+
+# --- JWT CONFIG (if you use mode=jwt) ---
+JWT_SECRET=supersecretkey
+JWT_EXPIRES_IN=1h
+
+# --- JWT SECRET ---
 JWT_SECRET=yourjwtsecret
 ```
 
