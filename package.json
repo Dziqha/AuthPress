@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Multi-auth middleware for Express: JWT, Basic, API Key, OAuth (Google, GitHub, Facebook, Discord)",
   "main": "index.js",
+  "types": "index.d.ts",
   "keywords": [
     "express",
     "auth",
