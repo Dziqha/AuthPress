@@ -3,16 +3,16 @@
 ![npm](https://img.shields.io/npm/v/authpress)
 ![npm downloads](https://img.shields.io/npm/dt/authpress)
 
-Multi-auth middleware untuk **Express.js**: JWT, Basic, API Key, OAuth (Google, GitHub, Facebook, Discord).  
-Mendukung mode **session** atau **JWT** untuk OAuth.
+Multi-auth middleware for **Express.js**: JWT, Basic, API Key, OAuth (Google, GitHub, Facebook, Discord).
+Supports **session** or **JWT** mode for OAuth.
 
 ---
 
-## Prasyarat
+## Prerequisites
 
-- Node.js >= 18
-- Express.js >= 4
-- .env berisi:
+* Node.js >= 18
+* Express.js >= 4
+* `.env` file must include:
 
 ```env
 GOOGLE_CLIENT_ID=...
@@ -26,7 +26,7 @@ JWT_SECRET=yourjwtsecret
 
 ---
 
-## Instalasi
+## Installation
 
 ```bash
 npm install authpress
@@ -34,12 +34,12 @@ npm install authpress
 
 ---
 
-## Tipe Autentikasi
+## Authentication Types
 
-1. **JWT**: Stateless, cocok untuk SPA atau API.
-2. **Basic**: Simple username/password, untuk internal tools.
-3. **API Key**: Header-based key, cocok untuk service-to-service.
-4. **OAuth**: Login via provider (Google, GitHub, Facebook, Discord), mendukung **session** atau **JWT**.
+1. **JWT** – Stateless, best for SPA or API.
+2. **Basic** – Simple username/password, good for internal tools.
+3. **API Key** – Header-based authentication, ideal for service-to-service communication.
+4. **OAuth** – Login via providers (Google, GitHub, Facebook, Discord), supports **session** or **JWT** mode.
 
 ---
 
@@ -55,7 +55,7 @@ const app = express();
 app.use(express.json());
 app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 
-// Inisialisasi OAuth (hanya untuk session mode)
+// Initialize OAuth (only required for session mode)
 auth.oauth.init(app);
 
 // Setup providers
@@ -83,6 +83,29 @@ app.get("/jwt", auth.jwt({ secret: process.env.JWT_SECRET }), (req, res) => {
   res.json({ message: "JWT Auth OK", user: req.user });
 });
 
+// JWT Login (generate token)
+app.post('/login', (req, res) => {
+  const user = { id: 1, username: 'admin', role: 'admin' };
+  const token = auth.jwt.sign(user, config.secret, { expiresIn: '1h' });
+  res.json({ token });
+});
+
+// JWT route with role
+app.get('/admin', auth.jwt({ secret: process.env.JWT_SECRET }), auth.jwt.withRole(['admin']), (req, res) => {
+  res.json({ message: 'Admin Dashboard' });
+});
+
+// JWT Refresh token
+app.post('/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+  try {
+    const newToken = auth.jwt.refresh(refreshToken, config.secret, { expiresIn: '1h' });
+    res.json({ token: newToken });
+  } catch {
+    res.status(401).json({ error: 'Invalid refresh token' });
+  }
+});
+
 // Basic Auth route
 app.get("/basic", auth.basic({ users: { admin: "1234" } }), (req, res) => {
   res.json({ message: "Basic Auth OK", user: req.user });
@@ -97,7 +120,7 @@ app.get("/apikey", auth.apikey({ keyHeader: "x-api-key", keys: ["123456"] }), (r
 app.get("/auth/google", auth.oauth.login("google"));
 app.get("/auth/google/callback", auth.oauth.callback("google"));
 
-// Multi-auth setup (opsional)
+// Multi-auth setup (optional)
 const routes = [
   { method: "get", path: "/jwt", type: "jwt", config: { secret: process.env.JWT_SECRET }, handler: (req,res)=>res.json({user:req.user}) },
   { method: "get", path: "/basic", type: "basic", config: { users: { admin: "1234" } }, handler: (req,res)=>res.json({user:req.user}) },
@@ -115,16 +138,14 @@ app.listen(3000, () => console.log("✅ Server running at http://localhost:3000"
 
 ## Tips
 
-* Gunakan `mode: "jwt"` untuk SPA atau mobile apps.
-* Gunakan `mode: "session"` untuk website tradisional.
-* Bisa kombinasi multi-provider OAuth.
-* JWT bisa dikustom `jwtExpiresIn` dan `jwtSecret`.
-* Semua route auth bisa dikelola dari satu array `routes` → clean & scalable.
+* Use `mode: "jwt"` for SPAs or mobile apps.
+* Use `mode: "session"` for traditional web applications.
+* Supports multiple OAuth providers at once.
+* JWT can be customized via `jwtExpiresIn` and `jwtSecret`.
+* All authentication routes can be managed from a single `routes` array → clean & scalable.
 
 ---
 
 ## License
 
 🛡️ AuthPress is released under the [MIT License](./LICENSE).
-
-
