@@ -1,6 +1,6 @@
 {
   "name": "authpress",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Multi-auth middleware for Express: JWT, Basic, API Key, OAuth (Google, GitHub, Facebook, Discord)",
   "main": "index.js",
   "types": "index.d.ts",
